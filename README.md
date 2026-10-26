@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# URL Notepad
 
-## Getting Started
+A minimal, serverless notepad where the URL *is* the note. Text is compressed into the `?n=` query parameter as you type, so sharing a note is just sharing a link: no database, no accounts, nothing stored on a server.
 
-First, run the development server:
+## Features
+
+- **State in the URL**: notes are compressed with [lz-string](https://github.com/pieroxy/lz-string) (`compressToEncodedURIComponent`) and written to the URL with `history.replaceState`
+- **Debounced sync**: the URL updates 250 ms after you stop typing, without adding browser-history entries
+- **One-click sharing**: "Copy Link" copies the current URL to the clipboard
+- **Zero backend**: opening a link decompresses the note client-side
+
+## Tech stack
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · lz-string
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/muhannadsalkini/url-notepad.git
+cd url-notepad
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 and start typing.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                 # App Router layout and page
+├── components/Editor.tsx  # Textarea editor + Copy Link button
+└── hooks/useUrlNotes.ts   # Reads/writes the compressed note in the URL
+```
 
-## Learn More
+## Limitations
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Browsers and servers cap URL length, so very long notes may not survive sharing. Anyone with the link can read the note.
